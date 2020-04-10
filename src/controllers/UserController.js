@@ -1,8 +1,9 @@
 const connection = require('../connection');
+const bcrypt = require('bcryptjs');
 
 module.exports = {
     async createUser(req, res) {
-        const { nome, email, senha } = req.body;
+        let { nome, email, senha } = req.body;
 
         const sql = `SELECT * FROM usuarios WHERE email='${email}'`;
 
@@ -13,6 +14,9 @@ module.exports = {
                 if (results!='') {
                     res.json({response: 'usuario_existente'});
                 }else{
+                    const salt = bcrypt.genSaltSync(10);
+                    senha = bcrypt.hashSync(senha, salt);
+                    
                     const sql = `INSERT INTO usuarios(nome, email, senha, dt_sistema, status) VALUES ('${nome}', '${email}', '${senha}', NOW(), 'A')`;
         
                     connection.query(sql, function (error, results){
