@@ -15,7 +15,7 @@ routes.post('/seller/login', SellerController.loginSeller);
 routes.get('/seller/products/:i_vendedor', auth, SellerController.getProducts);
 
 routes.post('/product/create', auth, ProductController.createProduct);
-routes.get('/product', auth, ProductController.getProducts);
+routes.get('/product', ProductController.getProducts);
 routes.get('/product/:i_produto', auth, ProductController.getProduct);
 
 module.exports = routes;

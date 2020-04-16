@@ -1,5 +1,17 @@
 const connection = require('../connection.js');
 
+const separar = (base, max) => {    
+    let idx = 0;
+    result = [];
+
+    while (idx < base.length) {
+        if (idx % max === 0) result.push([]);
+        result[result.length - 1].push(base[idx++]);
+    }
+
+    return result;
+}
+
 module.exports = {
     async createProduct(req, res) {
         let { nome, descricao, preco, i_vendedor, status, quantidade } = req.body;
@@ -24,7 +36,8 @@ module.exports = {
                 res.status(403).json({response: 'Ocorreu um erro desconhecido'}); 
                 console.log(error);
             } else{
-                res.json({response: results});
+                results = JSON.parse(JSON.stringify(results));
+                res.json({ response: separar(results, 4) });
             }
         });
     },
