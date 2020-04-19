@@ -14,9 +14,9 @@ const separar = (base, max) => {
 
 module.exports = {
     async createProduct(req, res) {
-        let { nome, descricao, preco, i_vendedor, status, quantidade } = req.body;
+        let { nome, descricao, preco, i_vendedor, status, quantidade, i_categoria } = req.body;
 
-        const sql = `INSERT INTO produtos(nome, quantidade, descricao, preco, status, dt_sistema, i_vendedor) VALUES('${nome}', ${quantidade}, '${descricao}', ${preco}, '${status}', NOW(), ${i_vendedor})`;
+        const sql = `INSERT INTO produtos(nome, quantidade, descricao, preco, status, dt_sistema, i_vendedor, i_categoria) VALUES('${nome}', ${quantidade}, '${descricao}', ${preco}, '${status}', NOW(), ${i_vendedor}, ${i_categoria})`;
         
         connection.query(sql, function (error, results){
             if(error) {
@@ -29,14 +29,27 @@ module.exports = {
     },
 
     async getProducts(req, res) {
-        const sql = `SELECT * FROM produtos`;
+        const { searchTerm, categorie } = req.query;        
+        let filter = '';
+                
+        if (searchTerm!='' && searchTerm!=undefined) {            
+            filter = `WHERE nome LIKE '%${searchTerm}%'`;
+        }else if (categorie!=undefined && categorie!='') {            
+            if (filter!='') {
+                filter = filter + ` AND i_categoria=${categorie}`;
+            }else{
+                filter = `WHERE i_categoria=${categorie}`;
+            }
+        }
 
+        sql = `SELECT * FROM produtos ${filter}`;        
+        
         connection.query(sql, function (error, results){
             if(error) {
                 res.status(403).json({response: 'Ocorreu um erro desconhecido'}); 
                 console.log(error);
             } else{
-                results = JSON.parse(JSON.stringify(results));
+                results = JSON.parse(JSON.stringify(results));                                
                 res.json({ response: separar(results, 4) });
             }
         });
