@@ -66,10 +66,10 @@ module.exports = {
 
                         res.status(200).send({ auth: true, token: token });
                     }else{
-                        res.json({ response: 'credenciais_incorreta' });
+                        res.status(422).json({ response: 'credenciais_incorreta' });
                     }
                 }else{
-                    res.json({ response: 'usuario_inexistente'});
+                    res.status(422).json({ response: 'usuario_inexistente'});
                 }
             }
         });
